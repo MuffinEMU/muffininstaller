@@ -11,8 +11,8 @@ non-commercial re-implementation for MuffinEMU.
 """
 import datetime, glob, json, os, plistlib, subprocess, sys, urllib.request
 
-REPO_PAGES = "https://muffinemu.github.io/MuffinInstaller"
-SIGNED_RELEASE = "https://github.com/MuffinEMU/MuffinInstaller/releases/download/signed"
+REPO_PAGES = "https://muffinemu.github.io/muffininstaller"
+SIGNED_RELEASE = "https://github.com/MuffinEMU/muffininstaller/releases/download/signed"
 BUNDLE_ID = "com.void.muffinemu"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE, CERTS, SIGNED = (os.path.join(ROOT, d) for d in ("site", "certs", "signed"))
