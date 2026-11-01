@@ -1,0 +1,69 @@
+name: Publish MuffinInstaller
+
+# Builds the install site and deploys it to GitHub Pages. When certs/ has certificates it also signs
+# the latest MuffinEMU release with each (zsign) and uploads the signed IPAs to the 'signed' release.
+# With an empty certs/ it just publishes the page and the Apple-ID path. No certificates ship here.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * *"   # daily: pick up a new MuffinEMU release and recheck certificate expiry
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build zsign (only when certificates are present)
+        run: |
+          set -e
+          if compgen -G "certs/*/" > /dev/null; then
+            sudo apt-get update && sudo apt-get install -y libssl-dev g++ git
+            git clone --depth 1 https://github.com/zhlynn/zsign.git /tmp/zsign
+            ( cd /tmp/zsign && g++ -std=c++14 -O2 -o /usr/local/bin/zsign *.cpp common/*.cpp -lcrypto )
+            zsign -v || true
+          else
+            echo "No certificates in certs/; skipping zsign (page + Apple-ID path only)."
+          fi
+
+      - name: Build site
+        env:
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+        run: python3 scripts/build.py
+
+      - name: Upload signed IPAs to the 'signed' release
+        if: ${{ hashFiles('signed/*.ipa') != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          gh release view signed >/dev/null 2>&1 || \
+            gh release create signed --title "Signed MuffinEMU builds" --prerelease \
+              --notes "Auto-signed per certificate for on-device install. Not an official release."
+          gh release upload signed signed/*.ipa --clobber
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
