@@ -1,107 +1,230 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>MuffinInstaller — install MuffinEMU on iPhone & iPad, no computer</title>
-<meta name="description" content="Install MuffinEMU, the Wii U emulator for iPhone and iPad, straight from the web — one tap, no computer — or with your own Apple ID.">
-<link rel="canonical" href="https://muffinemu.github.io/MuffinInstaller/">
-<meta name="theme-color" content="#1a1030">
+<title>MuffinInstaller — install MuffinEMU on iPhone &amp; iPad, no computer</title>
+<meta name="description" content="Install MuffinEMU, the Wii U emulator for iPhone and iPad, straight from the web — one tap, no computer — or keep it signed with your own Apple ID.">
+<link rel="canonical" href="https://muffinemu.github.io/muffininstaller/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="application-name" content="MuffinInstaller">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MuffinEMU">
 <meta property="og:title" content="MuffinInstaller — install MuffinEMU, no computer">
-<meta property="og:description" content="Install MuffinEMU on your iPhone or iPad straight from the web, or with your own Apple ID.">
-<style>
-  :root{
-    --bg1:#140d2c; --bg2:#241543; --card:#1f1838; --card2:#271d44;
-    --line:#39305c; --line2:#4a3f73; --text:#f3eefc; --text2:#c7bce6; --text3:#9487bd;
-    --amber:#f4a63a; --blueberry:#6c7bff; --berry:#b65cc0; --good:#4fcf8e; --warn:#ffb84d; --bad:#ff6b6b;
-  }
-  @media (prefers-color-scheme: light){
-    :root{ --bg1:#f3f0fb; --bg2:#e7e0f6; --card:#ffffff; --card2:#f7f3ff; --line:#e2dcf2; --line2:#d3c9ec;
-           --text:#241a3c; --text2:#5a4f7a; --text3:#8a7fae; }
-  }
-  *{box-sizing:border-box}
-  body{margin:0; font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-       color:var(--text); background:linear-gradient(160deg,var(--bg1),var(--bg2)); min-height:100vh;}
-  .wrap{max-width:860px; margin:0 auto; padding:0 20px;}
-  header.hero{padding:56px 0 28px; text-align:center;}
-  .mark{width:84px; height:84px; margin:0 auto 14px; display:block; filter:drop-shadow(0 10px 24px rgba(0,0,0,.35));}
-  h1{font-size:34px; line-height:1.15; margin:0 0 8px; font-weight:800; letter-spacing:-.02em;}
-  .sub{font-size:17px; color:var(--text2); margin:0 auto; max-width:560px;}
-  .ver{display:inline-block; margin-top:14px; font-size:13px; font-weight:700; color:var(--amber);
-       background:color-mix(in oklab,var(--amber) 16%,transparent); border:1px solid color-mix(in oklab,var(--amber) 40%,transparent);
-       padding:5px 12px; border-radius:999px;}
-  section{margin:30px 0;}
-  .step-h{display:flex; align-items:center; gap:12px; margin:0 0 6px;}
-  .step-n{flex:none; width:30px; height:30px; border-radius:10px; display:grid; place-items:center;
-          font-weight:800; font-size:15px; color:#fff; background:linear-gradient(140deg,var(--blueberry),var(--berry));}
-  h2{font-size:21px; margin:0; font-weight:800; letter-spacing:-.01em;}
-  .lead{color:var(--text2); margin:4px 0 16px 42px;}
-  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px;}
-  .cert-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px;
-             display:flex; flex-direction:column; gap:10px; transition:transform .15s, border-color .15s;}
-  .cert-card:hover{transform:translateY(-2px); border-color:var(--line2); background:var(--card2);}
-  .cert-card[data-ok="1"]{border-color:color-mix(in oklab,var(--blueberry) 50%,transparent);}
-  .cert-name{font-weight:700; font-size:16px; word-break:break-word;}
-  .cert-meta{font-size:12.5px; color:var(--text3); margin:0;}
-  .pill{display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px;}
-  .pill.good{color:var(--good); background:color-mix(in oklab,var(--good) 16%,transparent);}
-  .pill.warn{color:var(--warn); background:color-mix(in oklab,var(--warn) 18%,transparent);}
-  .pill.bad{color:var(--bad); background:color-mix(in oklab,var(--bad) 18%,transparent);}
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; margin-top:auto;
-       padding:11px 16px; border-radius:12px; font-weight:700; font-size:15px; text-decoration:none;
-       color:#fff; background:linear-gradient(140deg,var(--blueberry),var(--berry)); border:none; cursor:pointer;}
-  .btn:hover{filter:brightness(1.07);} .btn:active{transform:scale(.97);}
-  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--line2);}
-  .btn.block{width:100%;}
-  .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px; margin-left:42px;}
-  ol.steps{margin:0; padding-left:20px;} ol.steps li{margin:7px 0; color:var(--text2);}
-  ol.steps li strong{color:var(--text);}
-  .note{margin-left:42px; font-size:13.5px; color:var(--text3); background:var(--card);
-        border:1px dashed var(--line2); border-radius:14px; padding:14px;}
-  .empty{margin-left:0; grid-column:1/-1; text-align:center; color:var(--text3); padding:26px;
-         border:1px dashed var(--line2); border-radius:16px;}
-  footer{margin:48px 0 30px; text-align:center; color:var(--text3); font-size:13px;}
-  footer a{color:var(--text2);}
-  code{background:color-mix(in oklab,var(--line) 60%,transparent); padding:1px 6px; border-radius:6px; font-size:13px;}
-</style>
+<meta property="og:description" content="Install MuffinEMU on your iPhone or iPad straight from the web, or keep it signed with your own Apple ID.">
+<meta property="og:url" content="https://muffinemu.github.io/muffininstaller/">
+<meta property="og:image" content="https://muffinemu.github.io/MuffinEMU/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MuffinInstaller — install MuffinEMU, no computer">
+<meta name="twitter:description" content="Install MuffinEMU on your iPhone or iPad straight from the web, or keep it signed with your own Apple ID.">
+<meta name="twitter:image" content="https://muffinemu.github.io/MuffinEMU/social-preview.png">
+<meta name="theme-color" content="#05060B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F4F5FA" media="(prefers-color-scheme: light)">
+<link rel="icon" href="https://muffinemu.github.io/MuffinEMU/assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="https://muffinemu.github.io/MuffinEMU/assets/icon-180.png">
+<link rel="preload" href="https://muffinemu.github.io/MuffinEMU/assets/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://muffinemu.github.io/MuffinEMU/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://muffinemu.github.io/MuffinEMU/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+<!-- The official MuffinEMU site's own stylesheet and theme engine, loaded straight from the site so
+     this installer always wears the exact same look, fonts and themes. The engine keys its asset
+     base off this script's own URL, so icons and fonts resolve back to the main site. -->
+<link rel="stylesheet" href="https://muffinemu.github.io/MuffinEMU/assets/site.css">
+<script src="https://muffinemu.github.io/MuffinEMU/assets/theme.js"></script>
 </head>
-<body>
-<div class="wrap">
-  <header class="hero">
-    <img class="mark" alt="" src="muffin.svg">
-    <h1>MuffinInstaller</h1>
-    <p class="sub">Install <strong>MuffinEMU</strong>, the Wii U emulator for iPhone and iPad, straight from this page — no computer — or with your own Apple ID.</p>
-    <span class="ver" data-version>MuffinEMU</span>
-  </header>
+<body data-base="https://muffinemu.github.io/MuffinEMU/">
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+    <symbol id="i-chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="6" y="6" width="12" height="12" rx="2.5"/>
+      <path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3"/>
+    </symbol>
+    <symbol id="i-display" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2.5" y="4" width="19" height="13" rx="2"/>
+      <path d="M8.5 21h7M12 17v4"/>
+    </symbol>
+    <symbol id="i-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 6.5S10 4.5 4 4.5v13c6 0 8 2 8 2s2-2 8-2v-13c-6 0-8 2-8 2z"/>
+      <path d="M12 6.5v15"/>
+    </symbol>
+    <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 4.5h11l4 4v11a1 1 0 0 1-1 1h-14a1 1 0 0 1-1-1v-14a1 1 0 0 1 1-1z"/>
+      <path d="M8 4.5v5h6v-5M7.5 20v-5h9v5"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3.5v12M7.5 11l4.5 4.5 4.5-4.5M4 19.5h16"/>
+    </symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M13 2.5 4.5 13.5H11l-1 8 9.5-11.5H13l1-7.5z"/>
+    </symbol>
+    <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="8" r="4.5"/>
+      <path d="M11.2 11.2 20 20M17 17l2-2M14.5 14.5l2-2"/>
+    </symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 18a4 4 0 0 1-.5-7.97 5.5 5.5 0 0 1 10.6-1.2A4.2 4.2 0 0 1 17.5 18H7z"/>
+    </symbol>
+    <symbol id="i-github" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5a9.5 9.5 0 0 0-3 18.5c.5.1.7-.2.7-.5v-1.7c-2.6.6-3.2-1.2-3.2-1.2-.4-1.1-1-1.4-1-1.4-.9-.6 0-.6 0-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1 2.9.8.1-.6.3-1 .6-1.3-2.1-.2-4.3-1-4.3-4.7 0-1 .4-1.9 1-2.6-.1-.2-.4-1.2.1-2.5 0 0 .8-.3 2.6 1a9 9 0 0 1 4.8 0c1.8-1.3 2.6-1 2.6-1 .5 1.3.2 2.3.1 2.5.6.7 1 1.6 1 2.6 0 3.7-2.2 4.5-4.3 4.7.3.3.6.9.6 1.8v2.7c0 .3.2.6.7.5A9.5 9.5 0 0 0 12 2.5z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.5a2 2 0 0 0 2 2h2.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></symbol>
+</defs></svg>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="backdrop" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grid-lines"></div><div class="grain"></div></div>
 
-  <section>
-    <div class="step-h"><span class="step-n">1</span><h2>One tap, from the web</h2></div>
-    <p class="lead">Open this page in <strong>Safari on your iPhone or iPad</strong> and tap a certificate to install MuffinEMU on-device. Pick one marked <em>valid</em>.</p>
-    <div class="grid" data-certs>
-      <div class="empty">Loading certificates…</div>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="https://muffinemu.github.io/MuffinEMU/index"><img src="https://muffinemu.github.io/MuffinEMU/assets/icon-64.png" alt="" width="30" height="30"><span>MuffinInstaller</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <a href="https://muffinemu.github.io/MuffinEMU/index">Home</a>
+      <a href="https://muffinemu.github.io/MuffinEMU/docs/installation">Install</a>
+      <a href="https://muffinemu.github.io/MuffinEMU/docs/muffininstaller" aria-current="page">MuffinInstaller</a>
+      <a href="https://github.com/MuffinEMU/Muffin-EMU">GitHub</a>
+      <a href="https://muffinemu.github.io/MuffinEMU/discord">Discord</a>
+      <button class="nav-theme" type="button" data-palette-open="theme "><span class="theme-dot" aria-hidden="true"></span>Theme: <span data-theme-name>Bakery (Original)</span></button>
+    </nav>
+    <div class="header-tools">
+      <button class="icon-btn theme-btn" type="button" data-palette-open="theme "><span class="theme-dot" aria-hidden="true"></span><span class="label" data-theme-name>Bakery (Original)</span></button>
+      <button class="icon-btn mode-btn" type="button" data-mode-cycle aria-label="Colour mode"><svg class="auto" aria-hidden="true"><use href="#i-auto"/></svg><svg class="moon" aria-hidden="true"><use href="#i-moon"/></svg><svg class="sun" aria-hidden="true"><use href="#i-sun"/></svg></button>
+      <button class="icon-btn nav-toggle" type="button" data-nav-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Menu"><svg aria-hidden="true"><use href="#i-menu"/></svg></button>
     </div>
-  </section>
+    <div class="progress" aria-hidden="true"></div>
+  </div>
+</header>
 
-  <section>
-    <div class="step-h"><span class="step-n">2</span><h2>Or with your own Apple ID</h2></div>
-    <p class="lead">Once MuffinEMU is installed, it signs and renews itself with <strong>your own</strong> Apple ID — the official MuffinInstaller, built in.</p>
-    <div class="card">
-      <ol class="steps">
-        <li>Install MuffinEMU above, or with <strong>SideStore / AltStore</strong>.</li>
-        <li>Open <strong>Settings &gt; Storage &gt; MuffinInstaller</strong> in the app.</li>
-        <li>Connect <strong>LocalDevVPN</strong>. On iOS 27 it pairs on-device; on 17.4–26, import a pairing file once.</li>
-        <li>Sign in with your <strong>Apple ID</strong>, or use your own certificate.</li>
-        <li>MuffinEMU keeps itself installed and updated from then on — refresh before a free Apple ID's 7 days run out, and install new releases automatically.</li>
-      </ol>
-      <p style="margin:14px 0 0"><a class="btn ghost" href="https://muffinemu.github.io/MuffinEMU/docs/muffininstaller">Full MuffinInstaller guide →</a></p>
+<main id="main" tabindex="-1">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill"><span class="pulse" aria-hidden="true"></span>Install on-device · iPhone &amp; iPad · No computer</span>
+      <h1 class="wordmark">Muffin<span class="accent">Installer</span></h1>
+      <p class="lede">Install <strong>MuffinEMU</strong>, the Wii U emulator for iPhone and iPad, straight from this page — one tap, no computer — or keep it signed with your own Apple ID, right inside the app.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#install"><svg aria-hidden="true"><use href="#i-download"/></svg>Install MuffinEMU</a>
+        <a class="btn btn-outline" href="https://github.com/MuffinEMU/Muffin-EMU"><svg aria-hidden="true"><use href="#i-github"/></svg>View source</a>
+      </div>
+      <p class="hero-note"><span class="ver" data-version>MuffinEMU</span> · Free and open source. Your Apple ID, if you use it, stays on your device and goes only to Apple.</p>
     </div>
-  </section>
+    <div class="hero-visual" aria-hidden="true" data-anim>
+      <div class="orb"></div>
+      <div class="ring"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="hero-icon"><div class="hero-face"><img class="hero-img" data-theme-icon src="https://muffinemu.github.io/MuffinEMU/assets/icons/bakery.svg" alt="" width="192" height="192" fetchpriority="high"></div></div>
+      <script>MuffinThemes.paintIcons()</script>
+      <span class="chip c1"><i></i>One tap</span>
+      <span class="chip c2"><i></i>Your Apple ID</span>
+      <span class="chip c3"><i></i>Auto-updates</span>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">Scroll<span></span></div>
+</section>
 
-  <footer>
-    <p>MuffinInstaller is part of <a href="https://muffinemu.github.io/MuffinEMU/">MuffinEMU</a> — Wii U emulation for iPhone and iPad. Your Apple ID, when you use it, stays on your device and goes only to Apple.</p>
-  </footer>
-</div>
+<section class="section" id="install" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Step one</span>
+      <h2>One tap, <span class="grad-text">from the web.</span></h2>
+      <p>Open this page in <strong>Safari on your iPhone or iPad</strong> and tap a certificate to install MuffinEMU on-device. Pick one marked <em>valid</em>. No computer, no cable.</p>
+    </div>
+    <div class="grid grid-3" data-stagger data-certs style="align-items:stretch">
+      <div class="card" style="grid-column:1/-1;text-align:center;color:var(--text-2)">Loading certificates…</div>
+    </div>
+    <p class="install-foot" data-reveal>Each card shows where the build comes from and installs only when you tap it — nothing downloads on its own. Certificates are added by their owners; no stolen or shared keys are listed here.</p>
+  </div>
+</section>
 
+<section class="section" id="appleid">
+  <div class="wrap">
+    <div class="install-panel" data-reveal="scale" data-anim>
+      <span class="eyebrow">Step two</span>
+      <h2>Or with your <span class="grad-text">own Apple ID.</span></h2>
+      <p style="color:var(--text-2);font-size:1.1rem;max-width:44em">Once MuffinEMU is installed, it signs and renews itself with <strong>your own</strong> Apple ID — the official MuffinInstaller, built into the app. On iOS 27 it pairs on-device; on 17.4–26 you import a pairing file once.</p>
+      <div class="grid grid-3" data-stagger style="margin-top:22px;align-items:start">
+        <div class="card pillar" data-reveal>
+          <span class="num">01</span>
+          <span class="card-icon"><svg aria-hidden="true"><use href="#i-download"/></svg></span>
+          <h3>Install the app</h3>
+          <p>Tap a certificate above, or add MuffinEMU through SideStore or AltStore.</p>
+        </div>
+        <div class="card pillar" data-reveal style="--i:1">
+          <span class="num">02</span>
+          <span class="card-icon"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span>
+          <h3>Open MuffinInstaller</h3>
+          <p>In the app, go to <strong>Settings › Storage › MuffinInstaller</strong>, connect LocalDevVPN, and pair.</p>
+        </div>
+        <div class="card pillar" data-reveal style="--i:2">
+          <span class="num">03</span>
+          <span class="card-icon"><svg aria-hidden="true"><use href="#i-key"/></svg></span>
+          <h3>Sign in &amp; forget it</h3>
+          <p>Sign in with your Apple ID, or use your own certificate. MuffinEMU keeps itself installed and updated — refreshing before a free Apple ID's 7 days run out.</p>
+        </div>
+      </div>
+      <div class="install-row" style="margin-top:24px">
+        <a class="btn btn-primary" href="https://muffinemu.github.io/MuffinEMU/docs/muffininstaller">Full MuffinInstaller guide <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-secondary" href="https://muffinemu.github.io/MuffinEMU/docs/installation">Other install methods</a>
+      </div>
+      <p class="install-foot">MuffinInstaller and on-device pairing need iOS 27 or later. Everything else — the app itself and JIT with an imported pairing — works on iOS 15 and up.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">How it works</span>
+      <h2>Two ways in, <span class="grad-text">one emulator.</span></h2>
+    </div>
+    <div class="grid grid-2" data-stagger style="align-items:start">
+      <div class="card" data-reveal>
+        <span class="card-icon"><svg aria-hidden="true"><use href="#i-cloud"/></svg></span>
+        <h3>From the web</h3>
+        <p>Each certificate below signs the latest MuffinEMU and hands your device an install link. One tap in Safari and it lands on your home screen. Certificates are added by their owners — no stolen or shared keys are listed here.</p>
+      </div>
+      <div class="card" data-reveal style="--i:1">
+        <span class="card-icon"><svg aria-hidden="true"><use href="#i-key"/></svg></span>
+        <h3>Your own signing</h3>
+        <p>The in-app MuffinInstaller re-signs MuffinEMU with your Apple ID or your own certificate and keeps it renewed, so it never expires out from under you. Nothing leaves your device except the sign-in Apple already handles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="https://muffinemu.github.io/MuffinEMU/index" style="margin-bottom:12px"><img src="https://muffinemu.github.io/MuffinEMU/assets/icon-64.png" alt="" width="30" height="30"><span>MuffinEMU</span></a>
+        <p style="margin:0">Wii U emulation for iPhone and iPad.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="https://muffinemu.github.io/MuffinEMU/docs/installation">Install</a>
+        <a href="https://muffinemu.github.io/MuffinEMU/docs/muffininstaller">MuffinInstaller</a>
+        <a href="https://muffinemu.github.io/MuffinEMU/docs/index">Docs</a>
+        <a href="https://github.com/MuffinEMU/muffininstaller">Installer source</a>
+        <a href="terms">Terms</a>
+        <a href="https://muffinemu.github.io/MuffinEMU/discord">Discord</a>
+      </nav>
+    </div>
+    <p class="fineprint">MuffinInstaller is part of <a href="https://muffinemu.github.io/MuffinEMU/">MuffinEMU</a>. Approach based on SideInstaller by FrizzleM; an independent, non-commercial re-implementation. Bring your own games and keys — no copyrighted content is distributed here.</p>
+    <div class="footer-mark" aria-hidden="true">Installer</div>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette aria-label="Search and commands">
+  <div class="palette-input">
+    <svg aria-hidden="true"><use href="#i-search"/></svg>
+    <input type="text" placeholder="Search pages, sections, themes…" aria-label="Search" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="palette-list" autocomplete="off" spellcheck="false">
+    <span class="kbd">esc</span>
+  </div>
+  <p class="palette-count visually-hidden" role="status" aria-live="polite"></p>
+  <ul class="palette-list" id="palette-list" role="listbox"></ul>
+  <div class="palette-foot"><span>↑↓ move</span><span>↵ open</span><span>“theme …” filters themes</span></div>
+</dialog>
+
+<script src="https://muffinemu.github.io/MuffinEMU/assets/app.js"></script>
 <script>
 (function () {
   // Latest MuffinEMU version, so the badge is never stale.
@@ -110,6 +233,8 @@
     .then(function(d){ var el=document.querySelector("[data-version]"); if(el&&d&&d.tag_name) el.textContent="MuffinEMU "+String(d.tag_name).replace(/^v/,""); })
     .catch(function(){});
 
+  function esc(s){var d=document.createElement("div"); d.textContent=String(s==null?"":s); return d.innerHTML;}
+
   // Install certificates, generated by the signing workflow into installer-data.json.
   fetch("installer-data.json?ts="+Date.now())
     .then(function(r){return r.ok?r.json():null;})
@@ -117,29 +242,34 @@
       var grid=document.querySelector("[data-certs]");
       var certs=(data&&data.certs)||[];
       if(!certs.length){
-        grid.innerHTML='<div class="empty">No install certificates are set up yet. Add your own signing certificate to the installer’s <code>certs/</code> folder and a card appears here. Meanwhile, use your own Apple ID (below) or SideStore.</div>';
+        grid.innerHTML='<div class="card" style="grid-column:1/-1;text-align:center;color:var(--text-2)">'
+          +'<span class="card-icon" style="margin:0 auto 10px"><svg aria-hidden="true"><use href="#i-cloud"/></svg></span>'
+          +'<h3 style="margin:0 0 6px">No web certificates yet</h3>'
+          +'<p style="margin:0">One-tap install certificates haven’t been added yet. Use <strong>your own Apple ID</strong> below, or install through SideStore or AltStore — then MuffinInstaller keeps MuffinEMU signed for you.</p></div>';
         return;
       }
       grid.innerHTML="";
-      certs.forEach(function(c){
+      certs.forEach(function(c,i){
         var days=(typeof c.daysLeft==="number")?c.daysLeft:null;
         var ok=days===null?false:days>0;
-        var pill = days===null ? '<span class="pill warn">unknown</span>'
-                 : days>7 ? '<span class="pill good">valid · '+days+' days</span>'
-                 : days>0 ? '<span class="pill warn">valid · '+days+' day'+(days===1?'':'s')+'</span>'
-                 : '<span class="pill bad">expired</span>';
-        var card=document.createElement("div");
-        card.className="cert-card"; card.setAttribute("data-ok", ok?"1":"0");
-        card.innerHTML='<div class="cert-name">'+esc(c.name)+'</div>'+pill+
-          (c.note?'<p class="cert-meta">'+esc(c.note)+'</p>':'')+
-          '<a class="btn" href="itms-services://?action=download-manifest&url='+encodeURIComponent(c.manifest)+'">Install MuffinEMU</a>';
+        var badge = days===null ? '<span class="badge open">unknown</span>'
+                 : days>7 ? '<span class="badge ok">valid · '+days+' days</span>'
+                 : days>0 ? '<span class="badge open">valid · '+days+' day'+(days===1?'':'s')+'</span>'
+                 : '<span class="badge">expired</span>';
+        var card=document.createElement("article");
+        card.className="card"; card.setAttribute("data-reveal",""); card.style.setProperty("--i", i);
+        card.style.display="flex"; card.style.flexDirection="column"; card.style.gap="12px";
+        card.innerHTML='<header style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0">'
+          +'<h3 style="margin:0;word-break:break-word">'+esc(c.name)+'</h3>'+badge+'</header>'
+          +(c.note?'<p style="margin:0;color:var(--text-2);font-size:.95rem">'+esc(c.note)+'</p>':'')
+          +'<a class="btn '+(ok?'btn-primary':'btn-secondary')+'" style="margin-top:auto" href="itms-services://?action=download-manifest&url='+encodeURIComponent(c.manifest)+'"><svg aria-hidden="true"><use href="#i-download"/></svg>Install MuffinEMU</a>';
         grid.appendChild(card);
       });
     })
     .catch(function(){
-      document.querySelector("[data-certs]").innerHTML='<div class="empty">Couldn’t load the installer list. Check your connection and reload.</div>';
+      var grid=document.querySelector("[data-certs]");
+      if(grid) grid.innerHTML='<div class="card" style="grid-column:1/-1;text-align:center;color:var(--text-2)">Couldn’t load the installer list. Check your connection and reload.</div>';
     });
-  function esc(s){var d=document.createElement("div"); d.textContent=String(s==null?"":s); return d.innerHTML;}
 })();
 </script>
 </body>
