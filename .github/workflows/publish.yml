@@ -26,6 +26,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore certificates from secrets
+        env:
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          python3 - <<'PY'
+          import base64, json, os, pathlib
+          s = json.loads(os.environ["ALL_SECRETS"])
+          safes = [n for n in s.get("CERT_SETS", "").split(",") if n]
+          for safe in safes:
+              key = "CERT_" + safe.upper().replace("-", "_")
+              d = pathlib.Path("certs", safe)
+              d.mkdir(parents=True, exist_ok=True)
+              (d / (safe + ".p12")).write_bytes(base64.b64decode(s[key + "_P12"]))
+              (d / (safe + ".mobileprovision")).write_bytes(base64.b64decode(s[key + "_PROV"]))
+              if s.get(key + "_PWD"):
+                  (d / "password.txt").write_text(s[key + "_PWD"])
+          print("restored %d certificate set(s) from secrets" % len(safes))
+          PY
+
       - name: Build zsign (only when certificates are present)
         run: |
           set -e
