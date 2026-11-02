@@ -32,10 +32,13 @@
 <script src="https://muffinemu.github.io/MuffinEMU/assets/theme.js"></script>
 <style>
   /* Installer-only layout, built from the site's own design tokens so it matches and theme-switches. */
-  .mi-hero{ text-align:center; padding:112px 0 8px; }
+  .mi-hero{ text-align:center; padding:44px 0 8px; }
   .mi-logo{ width:96px; height:96px; margin:0 auto 20px; display:block; border-radius:24px;
             box-shadow:var(--shadow); }
-  .mi-hero h1{ margin:0; }
+  /* Own heading size: the site's .wordmark is a giant hero mark with white-space:nowrap, and the long
+     word "MuffinInstaller" would overflow small phones. This matches the site's display font + gradient
+     accent, but sized for a utility page and allowed to wrap. */
+  .mi-hero h1{ margin:0; font:800 clamp(2.1rem, 6.5vw, 3.4rem)/1.05 var(--font-display); letter-spacing:-.02em; }
   .mi-tagline{ max-width:40em; margin:12px auto 0; color:var(--text-2); font-size:1.12rem; }
   .mi-badges{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:20px 0 4px; }
   .mi-badge{ display:inline-flex; align-items:center; gap:7px; padding:7px 14px; border-radius:999px;
@@ -126,7 +129,7 @@
 
   .mi-foot{ margin:44px 0 10px; text-align:center; color:var(--text-3); font-size:.85rem; line-height:1.8; }
   .mi-foot a{ color:var(--text-2); }
-  @media (max-width:640px){ .mi-hero{ padding-top:96px; } .mi-step-head h2{ font-size:1.3rem; } }
+  @media (max-width:640px){ .mi-hero{ padding-top:28px; } .mi-step-head h2{ font-size:1.3rem; } .mi-step-num{ width:34px; height:34px; } }
 </style>
 </head>
 <body data-base="https://muffinemu.github.io/MuffinEMU/">
@@ -172,7 +175,7 @@
     <header class="mi-hero" data-reveal>
       <img class="mi-logo" data-theme-icon src="https://muffinemu.github.io/MuffinEMU/assets/icons/bakery.svg" alt="MuffinInstaller" width="96" height="96" fetchpriority="high">
       <script>MuffinThemes.paintIcons()</script>
-      <h1 class="wordmark">Muffin<span class="accent">Installer</span></h1>
+      <h1>Muffin<span class="grad-text">Installer</span></h1>
       <p class="mi-tagline">The official installer for <strong>MuffinEMU</strong>, the Wii U emulator for iPhone &amp; iPad. Tap a certificate to install straight from this page — no computer — then keep it signed with your own Apple ID or enterprise certificate. Follow the steps below.</p>
       <div class="mi-badges">
         <span class="mi-badge">Version <b data-version>—</b></span>
@@ -305,6 +308,8 @@
     document.getElementById("noresult").hidden=true;
     list.forEach(function(c){
       var d=(typeof c.daysLeft==="number")?c.daysLeft:null;
+      // No data-reveal here: these cards are added after app.js's reveal observer is set up, so a
+      // data-reveal would leave them stuck at opacity:0. They render fully visible inside the revealed step.
       var art=document.createElement("article"); art.className="mi-cert";
       art.innerHTML='<h3>'+esc(c.name)+'</h3>'
         +'<p class="meta">'+(c.expires?'Expires '+esc(String(c.expires).slice(0,10))+' · ':'')+'<span class="mi-days '+dayClass(d)+'">'+dayText(d)+'</span></p>'
