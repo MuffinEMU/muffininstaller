@@ -28,21 +28,65 @@ jobs:
 
       - name: Restore certificates from secrets
         env:
-          ALL_SECRETS: ${{ toJSON(secrets) }}
+          SLOT1_NAME: ${{ secrets.CERT_SLOT_1_NAME }}
+          SLOT1_P12: ${{ secrets.CERT_SLOT_1_P12 }}
+          SLOT1_PROV: ${{ secrets.CERT_SLOT_1_PROV }}
+          SLOT1_PWD: ${{ secrets.CERT_SLOT_1_PWD }}
+          SLOT2_NAME: ${{ secrets.CERT_SLOT_2_NAME }}
+          SLOT2_P12: ${{ secrets.CERT_SLOT_2_P12 }}
+          SLOT2_PROV: ${{ secrets.CERT_SLOT_2_PROV }}
+          SLOT2_PWD: ${{ secrets.CERT_SLOT_2_PWD }}
+          SLOT3_NAME: ${{ secrets.CERT_SLOT_3_NAME }}
+          SLOT3_P12: ${{ secrets.CERT_SLOT_3_P12 }}
+          SLOT3_PROV: ${{ secrets.CERT_SLOT_3_PROV }}
+          SLOT3_PWD: ${{ secrets.CERT_SLOT_3_PWD }}
+          SLOT4_NAME: ${{ secrets.CERT_SLOT_4_NAME }}
+          SLOT4_P12: ${{ secrets.CERT_SLOT_4_P12 }}
+          SLOT4_PROV: ${{ secrets.CERT_SLOT_4_PROV }}
+          SLOT4_PWD: ${{ secrets.CERT_SLOT_4_PWD }}
+          SLOT5_NAME: ${{ secrets.CERT_SLOT_5_NAME }}
+          SLOT5_P12: ${{ secrets.CERT_SLOT_5_P12 }}
+          SLOT5_PROV: ${{ secrets.CERT_SLOT_5_PROV }}
+          SLOT5_PWD: ${{ secrets.CERT_SLOT_5_PWD }}
+          SLOT6_NAME: ${{ secrets.CERT_SLOT_6_NAME }}
+          SLOT6_P12: ${{ secrets.CERT_SLOT_6_P12 }}
+          SLOT6_PROV: ${{ secrets.CERT_SLOT_6_PROV }}
+          SLOT6_PWD: ${{ secrets.CERT_SLOT_6_PWD }}
+          SLOT7_NAME: ${{ secrets.CERT_SLOT_7_NAME }}
+          SLOT7_P12: ${{ secrets.CERT_SLOT_7_P12 }}
+          SLOT7_PROV: ${{ secrets.CERT_SLOT_7_PROV }}
+          SLOT7_PWD: ${{ secrets.CERT_SLOT_7_PWD }}
+          SLOT8_NAME: ${{ secrets.CERT_SLOT_8_NAME }}
+          SLOT8_P12: ${{ secrets.CERT_SLOT_8_P12 }}
+          SLOT8_PROV: ${{ secrets.CERT_SLOT_8_PROV }}
+          SLOT8_PWD: ${{ secrets.CERT_SLOT_8_PWD }}
+          SLOT9_NAME: ${{ secrets.CERT_SLOT_9_NAME }}
+          SLOT9_P12: ${{ secrets.CERT_SLOT_9_P12 }}
+          SLOT9_PROV: ${{ secrets.CERT_SLOT_9_PROV }}
+          SLOT9_PWD: ${{ secrets.CERT_SLOT_9_PWD }}
+          SLOT10_NAME: ${{ secrets.CERT_SLOT_10_NAME }}
+          SLOT10_P12: ${{ secrets.CERT_SLOT_10_P12 }}
+          SLOT10_PROV: ${{ secrets.CERT_SLOT_10_PROV }}
+          SLOT10_PWD: ${{ secrets.CERT_SLOT_10_PWD }}
         run: |
           python3 - <<'PY'
-          import base64, json, os, pathlib
-          s = json.loads(os.environ["ALL_SECRETS"])
-          safes = [n for n in s.get("CERT_SETS", "").split(",") if n]
-          for safe in safes:
-              key = "CERT_" + safe.upper().replace("-", "_")
-              d = pathlib.Path("certs", safe)
+          import base64, os, pathlib
+          restored = 0
+          for i in range(1, 11):
+              name = os.environ.get("SLOT%d_NAME" % i, "")
+              if not name:
+                  continue
+              if "/" in name or "\\" in name or name in (".", ".."):
+                  raise SystemExit("refusing unsafe certificate folder name: %r" % name)
+              d = pathlib.Path("certs", name)
               d.mkdir(parents=True, exist_ok=True)
-              (d / (safe + ".p12")).write_bytes(base64.b64decode(s[key + "_P12"]))
-              (d / (safe + ".mobileprovision")).write_bytes(base64.b64decode(s[key + "_PROV"]))
-              if s.get(key + "_PWD"):
-                  (d / "password.txt").write_text(s[key + "_PWD"])
-          print("restored %d certificate set(s) from secrets" % len(safes))
+              (d / (name + ".p12")).write_bytes(base64.b64decode(os.environ["SLOT%d_P12" % i]))
+              (d / (name + ".mobileprovision")).write_bytes(base64.b64decode(os.environ["SLOT%d_PROV" % i]))
+              pwd = os.environ.get("SLOT%d_PWD" % i, "")
+              if pwd:
+                  (d / "password.txt").write_text(pwd)
+              restored += 1
+          print("restored %d certificate set(s) from secret slots" % restored)
           PY
 
       - name: Build zsign (only when certificates are present)
