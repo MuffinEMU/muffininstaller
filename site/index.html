@@ -108,12 +108,21 @@
   details.mi-howto summary{ cursor:pointer; padding:12px 0; font-weight:700; }
   details.mi-howto[open] summary{ border-bottom:1px solid var(--line); margin-bottom:10px; }
 
-  /* ToS gate */
-  .mi-tos{ display:flex; align-items:center; gap:12px; justify-content:center; margin:26px auto 0;
-           max-width:34em; padding:14px 18px; background:var(--surface); border:1px solid var(--line);
-           border-radius:var(--radius-sm); color:var(--text-2); font-size:.95rem; cursor:pointer; }
-  .mi-tos input{ width:20px; height:20px; flex:none; accent-color:var(--b1, #7a5cff); }
-  .mi-gated{ opacity:.45; pointer-events:none; filter:saturate(.6); transition:opacity .25s, filter .25s; }
+  /* Terms acceptance — sits at the bottom of step 1, by the install actions; install is blocked until ticked. */
+  .mi-termsbar{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:16px; padding:15px 18px;
+                background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); }
+  .mi-termsbar.needs{ border-color:#ffb84d; box-shadow:0 0 0 3px color-mix(in oklab,#ffb84d 22%,transparent); }
+  .mi-tos{ display:flex; align-items:center; gap:12px; color:var(--text); font-size:.98rem; cursor:pointer; flex:1 1 auto; }
+  .mi-tos input{ width:22px; height:22px; flex:none; accent-color:var(--b1, #7a5cff); }
+  .mi-termsbar-note{ color:var(--text-3); font-size:.85rem; }
+
+  /* Please-accept alert */
+  dialog.mi-alert{ max-width:360px; width:calc(100% - 40px); border:1px solid var(--line-2); border-radius:var(--radius);
+                   background:var(--surface-solid); color:var(--text); padding:24px; box-shadow:var(--shadow); }
+  dialog.mi-alert::backdrop{ background:rgba(0,0,0,.55); backdrop-filter:blur(3px); }
+  dialog.mi-alert h3{ margin:0 0 8px; font-size:1.15rem; }
+  dialog.mi-alert p{ margin:0 0 18px; color:var(--text-2); }
+  dialog.mi-alert .btn{ width:100%; }
 
   .mi-foot{ margin:44px 0 10px; text-align:center; color:var(--text-3); font-size:.85rem; line-height:1.8; }
   .mi-foot a{ color:var(--text-2); }
@@ -178,16 +187,11 @@
       </div>
     </header>
 
-    <label class="mi-tos" data-reveal>
-      <input type="checkbox" id="tos">
-      <span>I have read and accept the <a href="terms" target="_blank" rel="noopener">Terms</a> — bring my own games and keys.</span>
-    </label>
-
     <div class="guide" id="guide">
 
       <section class="mi-step" data-reveal>
         <div class="mi-step-head"><span class="mi-step-num">1</span><div><h2>Install MuffinEMU</h2><p>Open this page in Safari on your iPhone or iPad, then tap a certificate.</p></div></div>
-        <div id="gate1" class="mi-gated">
+        <div id="step1">
           <div class="mi-controls">
             <label class="mi-search"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Search certificates…" autocomplete="off" spellcheck="false" aria-label="Search certificates"></label>
             <select id="sort" class="mi-sort" aria-label="Sort certificates">
@@ -227,6 +231,11 @@
             <button class="btn btn-primary" id="useCert" type="button"><svg aria-hidden="true"><use href="#i-key"/></svg>Sign &amp; install with my certificate</button>
             <p class="note" data-cert-status>Signing with your own key happens on your device, so the key stays private. We'll walk you through finishing in MuffinInstaller.</p>
           </div>
+
+          <div class="mi-termsbar" id="termsbar" data-reveal>
+            <label class="mi-tos"><input type="checkbox" id="tos"><span>I have read and accept the <a href="terms" target="_blank" rel="noopener">Terms</a> — I bring my own games and keys.</span></label>
+            <span class="mi-termsbar-note">Required before installing.</span>
+          </div>
         </div>
       </section>
 
@@ -243,7 +252,7 @@
       </section>
 
       <section class="mi-step" data-reveal>
-        <div class="mi-step-head"><span class="mi-step-num">3</span><div><h2>You're set</h2><p>Bring your games and keys.</p></div></div>
+        <div class="mi-step-head"><span class="mi-step-num">3</span><div><h2>You're all set!</h2><p>Bring your games and keys.</p></div></div>
         <div class="mi-card">
           <p style="margin:0;color:var(--text-2)">Open <b>MuffinEMU</b> from your Home Screen, import your own Wii U games and keys through Files, and play. The <a href="https://muffinemu.github.io/MuffinEMU/docs/installation">full install guide</a> covers SideStore, AltStore and TrollStore too.</p>
         </div>
@@ -258,6 +267,12 @@
     </p>
   </div>
 </main>
+
+<dialog class="mi-alert" id="termsAlert" aria-labelledby="termsAlertTitle">
+  <h3 id="termsAlertTitle">One moment</h3>
+  <p>Please read and accept the Terms and Conditions to continue.</p>
+  <button class="btn btn-primary" type="button" data-close>OK</button>
+</dialog>
 
 <dialog class="palette" data-palette aria-label="Search and commands">
   <div class="palette-input"><svg aria-hidden="true"><use href="#i-search"/></svg><input type="text" placeholder="Type “theme”…" aria-label="Search" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="palette-list" autocomplete="off" spellcheck="false"><span class="kbd">esc</span></div>
@@ -326,10 +341,23 @@
   document.getElementById("q").addEventListener("input", apply);
   document.getElementById("sort").addEventListener("change", apply);
 
-  // ToS gate — Step 1's install actions stay dimmed until Terms are accepted.
-  var tos=document.getElementById("tos"), gate=document.getElementById("gate1");
-  function gateSync(){ gate.classList.toggle("mi-gated", !tos.checked); }
-  tos.addEventListener("change", gateSync); gateSync();
+  // Terms: every step stays usable, but installing is blocked until the box is ticked. A blocked attempt
+  // shows the alert and draws the eye to the Terms bar.
+  var tos=document.getElementById("tos"), termsbar=document.getElementById("termsbar"),
+      alertEl=document.getElementById("termsAlert");
+  function showAlert(){
+    if(alertEl.showModal){ try{ alertEl.showModal(); }catch(e){} } else { window.alert("Please read and accept the Terms and Conditions to continue."); }
+    termsbar.classList.add("needs");
+    termsbar.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+  alertEl.querySelector("[data-close]").addEventListener("click", function(){ if(alertEl.close) alertEl.close(); });
+  tos.addEventListener("change", function(){ if(tos.checked) termsbar.classList.remove("needs"); });
+  function accepted(){ return tos.checked; }
+  // Cert-card Install links are itms-services:// anchors; intercept them until Terms are accepted.
+  document.getElementById("grid").addEventListener("click", function(e){
+    var a=e.target.closest('a[href^="itms-services:"]');
+    if(a && !accepted()){ e.preventDefault(); showAlert(); }
+  });
 
   // "Use my own certificate" — filenames show inline; the key never leaves the browser.
   document.querySelectorAll('.mi-file input[type=file]').forEach(function(inp){
@@ -341,6 +369,7 @@
     });
   });
   document.getElementById("useCert").addEventListener("click", function(){
+    if(!accepted()){ showAlert(); return; }
     var p12=document.getElementById("p12").files[0], prov=document.getElementById("prov").files[0],
         pw=document.getElementById("pw").value, st=document.querySelector("[data-cert-status]");
     if(!p12||!prov){ st.textContent="Pick both your .p12 certificate and its .mobileprovision first."; st.style.color="#ffb84d"; return; }
