@@ -9,7 +9,7 @@ Apple-ID path still publish. No certificates ship in this repo.
 Approach based on SideInstaller by FrizzleM (https://github.com/FrizzleM/SideInstaller); independent,
 non-commercial re-implementation for MuffinEMU.
 """
-import datetime, glob, json, os, plistlib, subprocess, sys, urllib.request
+import datetime, glob, json, os, plistlib, subprocess, sys, urllib.request, zipfile
 
 REPO_PAGES = "https://muffinemu.github.io/muffininstaller"
 SIGNED_RELEASE = "https://github.com/MuffinEMU/muffininstaller/releases/download/signed"
@@ -35,6 +35,21 @@ def provision_expiry(path):
     return plistlib.loads(raw[i:j + 8]).get("ExpirationDate")
 
 
+
+def inject_marker(ipa_path):
+    """Add an origin marker inside the .app so the installed copy knows MuffinInstaller signed it.
+    It survives re-signing (ordinary bundle content); a plain SideStore/AltStore install won't have it."""
+    with zipfile.ZipFile(ipa_path, "a") as z:
+        app = next((n for n in z.namelist() if n.startswith("Payload/") and n.rstrip("/").endswith(".app")
+                    and n.count("/") == 2 and n.endswith("/")), None)
+        if not app:
+            tops = {n.split("/")[1] for n in z.namelist() if n.startswith("Payload/") and "/" in n[8:]}
+            app = "Payload/%s/" % next((t for t in tops if t.endswith(".app")), "")
+        if app and app != "Payload/":
+            if (app + "MuffinInstaller.origin") not in z.namelist():
+                z.writestr(app + "MuffinInstaller.origin", b"MuffinInstaller\n")
+
+
 def main():
     os.makedirs(os.path.join(SITE, "manifests"), exist_ok=True)
     version, ipa_url = latest_release()
@@ -43,6 +58,7 @@ def main():
     if cert_dirs and ipa_url:
         os.makedirs(SIGNED, exist_ok=True)
         urllib.request.urlretrieve(ipa_url, os.path.join(SIGNED, "MuffinEMU.ipa"))
+        inject_marker(os.path.join(SIGNED, "MuffinEMU.ipa"))
 
     certs = []
     for d in cert_dirs:
