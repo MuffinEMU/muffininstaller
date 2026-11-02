@@ -201,6 +201,22 @@
     <div class="guide" id="guide">
 
       <section class="mi-step" data-reveal>
+        <div class="mi-step-head"><span class="mi-step-num">0</span><div><h2>Set up DNS (optional)</h2><p>A small DNS profile that helps the install go through. Do this first, on the same iPhone or iPad you're installing on.</p></div></div>
+        <a class="btn btn-secondary" href="MuffinInstallerDNS.mobileconfig" download="MuffinInstallerDNS.mobileconfig"><svg aria-hidden="true"><use href="#i-download"/></svg>Download DNS profile</a>
+        <ol style="margin:16px 0 0;padding-left:20px;color:var(--text-2)">
+          <li><b>Download it.</b> Tap <b>Download DNS profile</b> above, then tap <b>Allow</b> when Safari asks to download the configuration profile.</li>
+          <li><b>Install it.</b> Open <code>Settings</code>. At the top, tap <b>Profile Downloaded</b>, or go to <code>Settings → General → VPN &amp; Device Management</code>. Tap <b>MuffinInstaller</b>, tap <b>Install</b>, enter your passcode, then tap <b>Install</b> again.</li>
+          <li><b>Turn it on.</b> Go to <code>Settings → General → VPN &amp; Device Management → DNS</code> and make sure <b>MuffinInstaller</b> is selected instead of <b>Automatic</b>. Leave it on until MuffinEMU is installed.</li>
+          <li><b>Install MuffinEMU</b> using Step 1 below.</li>
+          <li><b>Remove it when you're done.</b> Go to <code>Settings → General → VPN &amp; Device Management → MuffinInstaller → Remove Profile</code>. You can also switch <b>DNS</b> back to <b>Automatic</b> and keep the profile, but removing it is cleaner.</li>
+        </ol>
+        <details class="mi-howto" style="margin-top:16px">
+          <summary>Why this profile, and who runs the DNS?</summary>
+          <p style="margin:0 0 12px;color:var(--text-2)">The profile switches your device's DNS to a resolver run by a third party (NextDNS). Every DNS lookup your device makes goes through that service while the profile is selected, not only the lookups for this installer. If you'd rather not use a third-party resolver, skip this step.</p>
+        </details>
+      </section>
+
+      <section class="mi-step" data-reveal>
         <div class="mi-step-head"><span class="mi-step-num">1</span><div><h2>Install MuffinEMU</h2><p>Open this page in Safari on your iPhone or iPad, then tap a certificate.</p></div></div>
         <div id="step1">
           <div class="mi-controls">
